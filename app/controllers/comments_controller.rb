@@ -6,6 +6,11 @@ class CommentsController < ApplicationController
     @comment = @entry.comments.build(comment_params)
     @comment.save
     redirect_to blog_entry_path(@entry.blog_id, @entry.id), notice: 'comment created.'
+
+    # メール送信
+    NoticeMailer.sendmail_confirm(@entry.blog.title,
+      @entry, @comment, "http://#{request.host}:#{request.port.to_s}" +
+      blog_entry_path(@entry.blog_id, @entry.id)).deliver
   end
 
   def approve
