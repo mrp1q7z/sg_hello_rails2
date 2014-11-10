@@ -1,4 +1,14 @@
 Rails.application.routes.draw do
+  resources 'blogs' do
+    resources :entries, except: [:index] do
+      resources :comments, except: [:index, :new, :edit, :show, :update] do
+        member do
+          patch 'approve'
+        end
+      end
+    end
+  end
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

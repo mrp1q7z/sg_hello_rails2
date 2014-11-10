@@ -1,0 +1,18 @@
+%h1 Listing blogs
+
+- if notice
+  #notice= notice
+
+%table
+  %thead
+    %tr
+      %td(colspan="4") Title
+  %tbody
+    - @blogs.each do |blog|
+      %tr
+        %td= blog.title
+        %td= link_to 'Show', blog
+        %td= link_to 'Edit', edit_blog_path(blog)
+        %td= link_to 'Destroy', blog, method: :delete, data: { confirm: 'Are you sure?' }
+
+= link_to 'New Blog', new_blog_path

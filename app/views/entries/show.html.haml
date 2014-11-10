@@ -1,0 +1,42 @@
+%p#notice<
+  = notice
+
+%h1= @blog.title
+
+%p
+  %strong Title:
+  = @entry.title
+
+%p
+  %strong Body:
+  = @entry.body
+
+= link_to 'Edit', edit_blog_entry_path(@entry.blog_id, @entry.id)
+|
+= link_to 'Back', blog_path(@entry.blog_id)
+
+%hr
+
+%h2 Listing comments
+%table
+  %thead
+    %tr
+      %td(colspan="3") Body
+  %tbody
+    - @entry.comments.each do |comment|
+      %tr
+        - if comment.status == 'approved'
+          %td= comment.body
+          %td
+        - else
+          %td (承認待ち)
+          %td= link_to 'Approve', approve_blog_entry_comment_path(@blog.id, @entry.id, comment.id), method: :patch
+        %td= link_to 'Destroy', blog_entry_comment_path(@blog.id, @entry.id, comment.id), method: :delete, data: { confirm: 'Are you sure?' }
+
+%h2 new comment
+= form_for [@blog, @entry, @entry.comments.build] do |f|
+  %div.field
+    = f.label :body
+    = f.text_area :body
+  %div.actions
+    = f.submit
