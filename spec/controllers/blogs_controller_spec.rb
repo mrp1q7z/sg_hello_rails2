@@ -15,7 +15,9 @@ RSpec.describe BlogsController, :type => :controller do
     end
     it "新規作成後に@blogのshowに遷移すること" do
       @blog = Blog.last
-      response.should redirect_to blog_path(@blog)
+      # Deprecation Warnings が出るので...
+      #response.should redirect_to blog_path(@blog)
+      expect(response).to redirect_to blog_path(@blog)
     end
   end
 end
