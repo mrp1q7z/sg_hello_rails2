@@ -1,21 +1,15 @@
 class EntriesController < ApplicationController
+  before_action :set_blog, only: [:show, :edit, :update, :destroy, :new, :create]
   before_action :set_entry, only: [:show, :edit, :update, :destroy]
 
   def show
-    @blog = Blog.find(params[:blog_id])
-    if @entry.nil?
-      render plain: "404 Not Found", status: 404
-      return
-    end
   end
 
   def new
-    @blog = Blog.find(params[:blog_id])
     @entry = @blog.entries.build
   end
 
   def create
-    @blog = Blog.find(params[:blog_id])
     @entry = @blog.entries.build(entry_params)
     if @entry.save
       redirect_to blog_path(@blog), notice: 'Entry was successfully created.'
@@ -25,7 +19,6 @@ class EntriesController < ApplicationController
   end
 
   def edit
-    @blog = Blog.find(params[:blog_id])
   end
 
   def update
@@ -38,12 +31,20 @@ class EntriesController < ApplicationController
 
   def destroy
     @entry.destroy
-    redirect_to entries_url, notice: 'Entry was successfully destroyed.'
+    redirect_to @blog, notice: 'Entry was successfully destroyed.'
   end
 
   private
+    def set_blog
+      @blog = Blog.find(params[:blog_id])
+    end
+
     def set_entry
-      @entry = Entry.find_by(id: params[:id], blog_id: params[:blog_id])
+      begin
+        @entry = @blog.entries.find(params[:id])
+      rescue ActiveRecord::RecordNotFound
+        render plain: "404 Not Found", status: 404
+      end
     end
 
     def entry_params
